@@ -1,0 +1,26 @@
+{
+    "name": "latuconsinafr/3d-bin-packager",
+    "description": "PHP Library for 3D Bin Packing.",
+    "keywords": [
+        "php",
+        "bin-packing",
+        "2d-bin-packing",
+        "3d-bin-packing"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Farista Latuconsina",
+            "email": "faristalatuconsina@gmail.com",
+            "homepage": "https://github.com/latuconsinafr"
+        }
+    ],
+    "require": {
+        "php": "^5.3 || ^7.0 || ^8.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Latuconsinafr\\BinPackager\\BinPackager3D\\": "src/"
+        }
+    }
+}
