@@ -32,9 +32,9 @@ class RotationCombinationType
     public const ALL_ROTATION_COMBINATION = [
         RotationCombinationType::LBH_ROTATION,
         RotationCombinationType::LHB_ROTATION,
-        RotationCombinationType::BLH_ROTATION,
-        RotationCombinationType::BHL_ROTATION,
         RotationCombinationType::HLB_ROTATION,
-        RotationCombinationType::HBL_ROTATION
+        RotationCombinationType::HBL_ROTATION,
+        RotationCombinationType::BLH_ROTATION,
+        RotationCombinationType::BHL_ROTATION
     ];
 }

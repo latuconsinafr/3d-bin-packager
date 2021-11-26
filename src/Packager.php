@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Latuconsinafr\BinPackager\BinPackager3D;
 
 use Latuconsinafr\BinPackager\BinPackager3D\Types\AxisType;
-use Latuconsinafr\BinPackager\BinPackager3D\Types\PivotType;
+use Latuconsinafr\BinPackager\BinPackager3D\Types\PositionType;
 
 /**
  * A main packager class to pack all the items into all the bins.
@@ -59,34 +59,66 @@ final class Packager
 
     /**
      * The add bin to the packager method.
-     * The bin(s) would become the container for all the items.
+     * The bin(s) would become the container for the item(s).
      * 
-     * @param float $length The length of the bin.
-     * @param float $breadth The breadth of the bin.
-     * @param float $height The height of the bin.
-     * @param float $weight The weight of the bin.
+     * @param Bin $bin The bin to contain the item(s).
      * 
      * @return void
      */
-    public function addBin(float $length, float $breadth, float $height, float $weight): void
+    public function addBin(Bin $bin): void
     {
-        $this->bins[] = new Bin($length, $breadth, $height, $weight);
+        $this->bins[] = $bin;
+    }
+
+    /**
+     * The add bins to the packager method.
+     * The bins would become the container for the items.
+     * 
+     * @param iterable $bins The iterable of @see Bin to contain the item(s).
+     * 
+     * @return void
+     */
+    public function addBins(iterable $bins): void
+    {
+        foreach ($bins as $bin) {
+            if (!$bin instanceof Bin) {
+                throw new \UnexpectedValueException("Bin should be an instance of Bin class.");
+            }
+
+            $this->bins[] = $bin;
+        }
     }
 
     /**
      * The add item to the packager method.
-     * This item(s) to put into the bin.
+     * This item(s) to put into the bin(s).
      * 
-     * @param float $length The length of the bin.
-     * @param float $breadth The breadth of the bin.
-     * @param float $height The height of the bin.
-     * @param float $weight The weight of the bin.
+     * @param Item $item The to put into the bin.
      * 
      * @return void
      */
-    public function addItem(float $length, float $breadth, float $height, float $weight): void
+    public function addItem(Item $item): void
     {
-        $this->items[] = new Item($length, $breadth, $height, $weight);
+        $this->items[] = $item;
+    }
+
+    /**
+     * The add items to the packager method.
+     * The items to put into the bin(s).
+     * 
+     * @param iterable $items The iterable of @see Item to put into the bin(s).
+     * 
+     * @return void
+     */
+    public function addItems(iterable $items): void
+    {
+        foreach ($items as $item) {
+            if (!$item instanceof Item) {
+                throw new \UnexpectedValueException("Item should be an instance of Item class.");
+            }
+
+            $this->items[] = $item;
+        }
     }
 
     /**
@@ -112,7 +144,7 @@ final class Packager
 
         // Bin has no fitted items yet
         if (iterator_count(new \ArrayIterator($bin->getFittedItems())) === 0) {
-            if (!$bin->putItem($item, PivotType::START_POSITION)) {
+            if (!$bin->putItem($item, PositionType::START_POSITION)) {
                 $bin->setUnfittedItems($item);
             }
 
@@ -124,7 +156,7 @@ final class Packager
             $fittedItems = $bin->getFittedItems();
 
             foreach ($fittedItems as $fittedItem) {
-                $pivot = PivotType::START_POSITION;
+                $pivot = PositionType::START_POSITION;
                 $dimension = $fittedItem->getDimension();
 
                 if ($axis === AxisType::LENGTH) {

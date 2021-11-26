@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace Latuconsinafr\BinPackager\BinPackager3D;
 
-use Latuconsinafr\BinPackager\BinPackager3D\Handlers\Intersectionhandler;
+use Latuconsinafr\BinPackager\BinPackager3D\Handlers\IntersectionHandler;
 use Latuconsinafr\BinPackager\BinPackager3D\Types\AxisType;
 use Latuconsinafr\BinPackager\BinPackager3D\Types\RotationCombinationType;
 

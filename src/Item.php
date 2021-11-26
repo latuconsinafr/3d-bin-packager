@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace Latuconsinafr\BinPackager\BinPackager3D;
 
-use Latuconsinafr\BinPackager\BinPackager3D\Types\PivotType;
+use Latuconsinafr\BinPackager\BinPackager3D\Types\PositionType;
 use Latuconsinafr\BinPackager\BinPackager3D\Types\RotationCombinationType;
 
 /**
@@ -63,7 +63,7 @@ final class Item
         $this->weight = $weight;
 
         $this->rotationType = RotationCombinationType::LBH_ROTATION;
-        $this->position = PivotType::START_POSITION;
+        $this->position = PositionType::START_POSITION;
     }
 
     /**
