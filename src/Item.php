@@ -17,8 +17,13 @@ use Latuconsinafr\BinPackager\BinPackager3D\Types\RotationCombinationType;
 /**
  * A class representative of a single item to put into the @see Bin.
  */
-final class Item
+final class Item implements \JsonSerializable
 {
+    /**
+     * @var mixed The item's id.
+     */
+    private mixed $id;
+
     /**
      * @var float The item's length.
      */
@@ -50,13 +55,15 @@ final class Item
     private array $position;
 
     /**
+     * @param mixed $id The identifier of the item.
      * @param float $length The length of the item.
      * @param float $breadth The breadth of the item.
      * @param float $height The height of the item.
      * @param float $weight The weight of the item.
      */
-    public function __construct(float $length, float $breadth, float $height, float $weight)
+    public function __construct(mixed $id, float $length, float $breadth, float $height, float $weight)
     {
+        $this->id = $id;
         $this->length = $length;
         $this->breadth = $breadth;
         $this->height = $height;
@@ -64,6 +71,16 @@ final class Item
 
         $this->rotationType = RotationCombinationType::LBH_ROTATION;
         $this->position = PositionType::START_POSITION;
+    }
+
+    /**
+     * The item's id getter.
+     * 
+     * @return mixed The item's id.
+     */
+    public function getId(): mixed
+    {
+        return $this->id;
     }
 
     /**
@@ -206,5 +223,17 @@ final class Item
         }
 
         $this->position = $position;
+    }
+
+    /**
+     * The json serialize method.
+     * 
+     * @return array The resulted object.
+     */
+    public function jsonSerialize(): array
+    {
+        $vars = get_object_vars($this);
+
+        return $vars;
     }
 }

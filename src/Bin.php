@@ -18,8 +18,13 @@ use Latuconsinafr\BinPackager\BinPackager3D\Types\RotationCombinationType;
 /**
  * A class representative of a single bin to put @see Item into.
  */
-final class Bin
+final class Bin implements \JsonSerializable
 {
+    /**
+     * @var mixed The bin's id.
+     */
+    private mixed $id;
+
     /**
      * @var float The bin's length.
      */
@@ -51,13 +56,15 @@ final class Bin
     private iterable $unfittedItems;
 
     /**
+     * @param mixed $id The identifier of the bin.
      * @param float $length The length of the bin.
      * @param float $breadth The breadth of the bin.
      * @param float $height The height of the bin.
      * @param float $weight The weight of the bin.
      */
-    public function __construct(float $length, float $breadth, float $height, float $weight)
+    public function __construct(mixed $id, float $length, float $breadth, float $height, float $weight)
     {
+        $this->id = $id;
         $this->length = $length;
         $this->breadth = $breadth;
         $this->height = $height;
@@ -65,6 +72,16 @@ final class Bin
 
         $this->fittedItems = [];
         $this->unfittedItems = [];
+    }
+
+    /**
+     * The bin's id getter.
+     * 
+     * @return mixed The bin's id.
+     */
+    public function getId(): mixed
+    {
+        return $this->id;
     }
 
     /**
@@ -118,6 +135,16 @@ final class Bin
     }
 
     /**
+     * The bin's iterable fitted items getter.
+     * 
+     * @return ArrayIterator The bin's iterable fitted items.
+     */
+    public function getIterableFittedItems(): \ArrayIterator
+    {
+        return new \ArrayIterator($this->fittedItems);
+    }
+
+    /**
      * The bin's unfitted items getter.
      * 
      * @return iterable The bin's unfitted items.
@@ -125,6 +152,16 @@ final class Bin
     public function getUnfittedItems(): iterable
     {
         return $this->unfittedItems;
+    }
+
+    /**
+     * The bin's iterable unfitted items getter.
+     * 
+     * @return ArrayIterator The bin's iterable unfitted items.
+     */
+    public function getIterableUnfittedItems(): \ArrayIterator
+    {
+        return new \ArrayIterator($this->unfittedItems);
     }
 
     /**
@@ -248,5 +285,17 @@ final class Bin
         }
 
         return $fit;
+    }
+
+    /**
+     * The json serialize method.
+     * 
+     * @return array The resulted object.
+     */
+    public function jsonSerialize(): array
+    {
+        $vars = get_object_vars($this);
+
+        return $vars;
     }
 }
