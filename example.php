@@ -56,4 +56,5 @@ $time_elapsed_secs = microtime(true) - $start;
 // Dump time elapsed and the resulted bins
 print_r("Time Elapsed: " . $time_elapsed_secs . " second(s)\n");
 print_r("Result: \n");
-print_r($packager->getBins());
+print_r("Lower Bounds: " . $packager->getLowerBounds() . "\n");
+print_r(json_encode($packager->getBins()));

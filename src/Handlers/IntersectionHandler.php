@@ -30,7 +30,7 @@ final class IntersectionHandler
      * @return bool The flag indicates whether both items are intersected with each other or not, 
      * return true if both items are intersected with each other, otherwise false.
      */
-    private static function isRectangleIntersected(Item $firstItem, Item $secondItem, int $xAxis, int $yAxis): bool
+    private static function isRectangleIntersected(Item $firstItem, Item $secondItem, string $xAxis, string $yAxis): bool
     {
         $firstDimension = $firstItem->getDimension();
         $secondDimension = $secondItem->getDimension();

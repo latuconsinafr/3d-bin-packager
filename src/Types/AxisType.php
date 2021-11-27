@@ -17,9 +17,9 @@ namespace Latuconsinafr\BinPackager\BinPackager3D\Types;
 class AxisType
 {
     // Represents the 3d-plane axis
-    public const LENGTH = 0;
-    public const HEIGHT = 1;
-    public const BREADTH = 2;
+    public const LENGTH = 'x-axis';
+    public const HEIGHT = 'y-axis';
+    public const BREADTH = 'z-axis';
 
     // Enum contains all the 3d-plane axis
     public const ALL_AXIS = [

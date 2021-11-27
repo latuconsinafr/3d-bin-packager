@@ -41,6 +41,11 @@ final class Bin implements \JsonSerializable
     private float $height;
 
     /**
+     * @var float The bin's volume.
+     */
+    private float $volume;
+
+    /**
      * @var float The bin's weight.
      */
     private float $weight;
@@ -51,9 +56,29 @@ final class Bin implements \JsonSerializable
     private iterable $fittedItems;
 
     /**
+     * @var float The total fitted bin's volume.
+     */
+    private float $totalFittedVolume;
+
+    /**
+     * @var float The total fitted bin's weight.
+     */
+    private float $totalFittedWeight;
+
+    /**
      * @var iterable The unfitted item(s).
      */
     private iterable $unfittedItems;
+
+    /**
+     * @var float The total unfitted bin's volume.
+     */
+    private float $totalUnfittedVolume;
+
+    /**
+     * @var float The total unfitted bin's weight.
+     */
+    private float $totalUnfittedWeight;
 
     /**
      * @param mixed $id The identifier of the bin.
@@ -68,10 +93,16 @@ final class Bin implements \JsonSerializable
         $this->length = $length;
         $this->breadth = $breadth;
         $this->height = $height;
+        $this->volume = (float) $length * $breadth * $height;
         $this->weight = $weight;
 
         $this->fittedItems = [];
+        $this->totalFittedVolume = 0;
+        $this->totalFittedWeight = 0;
+
         $this->unfittedItems = [];
+        $this->totalUnfittedVolume = 0;
+        $this->totalUnfittedWeight = 0;
     }
 
     /**
@@ -112,6 +143,16 @@ final class Bin implements \JsonSerializable
     public function getHeight(): float
     {
         return $this->height;
+    }
+
+    /**
+     * Get the bin's volume.
+     * 
+     * @return float The bin's volume.
+     */
+    public function getVolume(): float
+    {
+        return $this->volume;
     }
 
     /**
@@ -165,33 +206,43 @@ final class Bin implements \JsonSerializable
     }
 
     /**
-     * Get the bin's volume.
+     * Get the bin's total fitted volume.
      * 
-     * @return float The bin's volume.
+     * @return float The fitted bin's volume.
      */
-    public function getVolume(): float
+    public function getTotalFittedVolume(): float
     {
-        return (float)($this->length * $this->breadth * $this->height);
+        return $this->totalFittedVolume;
     }
 
     /**
-     * Get the bin's total weight.
+     * Get the bin's total fitted weight.
      * 
-     * @return float The bin's total weight.
+     * @return float The fitted bin's weight.
      */
-    public function getTotalWeight(): float
+    public function getTotalFittedWeight(): float
     {
-        $weight = 0;
+        return $this->totalFittedWeight;
+    }
 
-        foreach ($this->fittedItems as $item) {
-            if (!$item instanceof Item) {
-                throw new \UnexpectedValueException("Item should be an instance of Item class.");
-            }
+    /**
+     * Get the bin's total unfitted volume.
+     * 
+     * @return float The unfitted bin's volume.
+     */
+    public function getTotalUnfittedVolume(): float
+    {
+        return $this->totalUnfittedVolume;
+    }
 
-            $weight += $item->getWeight();
-        }
-
-        return $weight;
+    /**
+     * Get the bin's total unfitted weight.
+     * 
+     * @return float The unfitted bin's weight.
+     */
+    public function getTotalUnfittedWeight(): float
+    {
+        return $this->totalUnfittedWeight;
     }
 
     /**
@@ -209,6 +260,8 @@ final class Bin implements \JsonSerializable
         }
 
         $this->fittedItems[] = $item;
+        $this->totalFittedVolume += $item->getVolume();
+        $this->totalFittedWeight += $item->getWeight();
     }
 
     /**
@@ -226,6 +279,8 @@ final class Bin implements \JsonSerializable
         }
 
         $this->unfittedItems[] = $item;
+        $this->totalUnfittedVolume += $item->getVolume();
+        $this->totalUnfittedWeight += $item->getWeight();
     }
 
     /**
@@ -243,7 +298,7 @@ final class Bin implements \JsonSerializable
         $validItemPosition = $item->getPosition();
         $item->setPosition($position);
 
-        foreach (range(0, count(RotationCombinationType::ALL_ROTATION_COMBINATION) - 1) as $rotationType) {
+        foreach (RotationCombinationType::ALL_ROTATION_COMBINATION as $rotationType) {
             $item->setRotationType($rotationType);
             $dimension = $item->getDimension();
 
@@ -266,7 +321,7 @@ final class Bin implements \JsonSerializable
             }
 
             if ($fit) {
-                if (($this->getTotalWeight() + $item->getWeight()) > $this->weight) {
+                if (($this->totalFittedWeight + $item->getWeight()) > $this->weight) {
                     return false;
                 }
 

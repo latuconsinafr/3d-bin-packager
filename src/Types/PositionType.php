@@ -17,5 +17,9 @@ namespace Latuconsinafr\BinPackager\BinPackager3D\Types;
 class PositionType
 {
     // Start position
-    public const START_POSITION = [0, 0, 0];
+    public const START_POSITION = [
+        AxisType::LENGTH    => 0,
+        AxisType::HEIGHT    => 0,
+        AxisType::BREADTH   => 0
+    ];
 }

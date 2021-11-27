@@ -22,12 +22,32 @@ final class Packager implements \JsonSerializable
     /**
      * @var iterable The bins.
      */
-    private iterable $bins = [];
+    private iterable $bins;
 
     /**
      * @var iterable The items to put into the bins.
      */
-    private iterable $items = [];
+    private iterable $items;
+
+    /**
+     * @var float The total bins volume inside the packager.
+     */
+    private float $totalBinsVolume;
+
+    /**
+     * @var float The total bins weight inside the packager.
+     */
+    private float $totalBinsWeight;
+
+    /**
+     * @var float The total items volume inside the packager.
+     */
+    private float $totalItemsVolume;
+
+    /**
+     * @var float The total items weight inside the packager.
+     */
+    private float $totalItemsWeight;
 
     /**
      */
@@ -35,6 +55,10 @@ final class Packager implements \JsonSerializable
     {
         $this->bins = [];
         $this->items = [];
+        $this->totalBinsVolume = 0;
+        $this->totalBinsWeight = 0;
+        $this->totalItemsVolume = 0;
+        $this->totalItemsWeight = 0;
     }
 
     /**
@@ -78,6 +102,63 @@ final class Packager implements \JsonSerializable
     }
 
     /**
+     * The packager's total bin(s) volume getter.
+     * 
+     * @return float The total bin(s) volume.
+     */
+    public function getTotalBinsVolume(): float
+    {
+        return $this->totalBinsVolume;
+    }
+
+    /**
+     * The packager's total bin(s) weight getter.
+     * 
+     * @return float The total bin(s) weight.
+     */
+    public function getTotalBinsWeight(): float
+    {
+        return $this->totalBinsWeight;
+    }
+
+    /**
+     * The packager's total item(s) volume getter.
+     * 
+     * @return float The total item(s) volume.
+     */
+    public function getTotalItemsVolume(): float
+    {
+        return $this->totalItemsVolume;
+    }
+
+    /**
+     * The packager's total item(s) weight getter.
+     * 
+     * @return float The total item(s) weight.
+     */
+    public function getTotalItemsWeight(): float
+    {
+        return $this->totalItemsWeight;
+    }
+
+    /**
+     * The packager's lower bounds getter.
+     * The lower bounds mean that the value returned is the worst case of the bin(s) needed to hold or contain all the items.
+     * Calculated based on the bin(s) and item(s) volume.
+     * 
+     * @return int The lower bounds.
+     */
+    public function getLowerBounds(): int
+    {
+        // To prevent the division by zero error
+        if ($this->totalItemsVolume == 0) {
+            return 0;
+        }
+
+        return (int)ceil($this->totalBinsVolume / $this->totalItemsVolume);
+    }
+
+    /**
      * The add bin to the packager method.
      * The bin(s) would become the container for the item(s).
      * 
@@ -94,6 +175,8 @@ final class Packager implements \JsonSerializable
         }
 
         $this->bins[$bin->getId()] = $bin;
+        $this->totalBinsVolume += $bin->getVolume();
+        $this->totalBinsWeight += $bin->getWeight();
     }
 
     /**
@@ -132,6 +215,8 @@ final class Packager implements \JsonSerializable
         }
 
         $this->items[$item->getId()] = $item;
+        $this->totalItemsVolume += $item->getVolume();
+        $this->totalItemsWeight += $item->getWeight();
     }
 
     /**
@@ -184,7 +269,7 @@ final class Packager implements \JsonSerializable
         }
 
         // Bin has fitted item(s) already
-        foreach (range(0, count(AxisType::ALL_AXIS) - 1) as $axis) {
+        foreach (AxisType::ALL_AXIS as $axis) {
             $fittedItems = $bin->getFittedItems();
 
             foreach ($fittedItems as $fittedItem) {
@@ -193,21 +278,21 @@ final class Packager implements \JsonSerializable
 
                 if ($axis === AxisType::LENGTH) {
                     $pivot = [
-                        $fittedItem->getPosition()[AxisType::LENGTH] + $dimension[AxisType::LENGTH],
-                        $fittedItem->getPosition()[AxisType::HEIGHT],
-                        $fittedItem->getPosition()[AxisType::BREADTH]
+                        AxisType::LENGTH  => $fittedItem->getPosition()[AxisType::LENGTH] + $dimension[AxisType::LENGTH],
+                        AxisType::HEIGHT  => $fittedItem->getPosition()[AxisType::HEIGHT],
+                        AxisType::BREADTH => $fittedItem->getPosition()[AxisType::BREADTH]
                     ];
                 } elseif ($axis === AxisType::HEIGHT) {
                     $pivot = [
-                        $fittedItem->getPosition()[AxisType::LENGTH],
-                        $fittedItem->getPosition()[AxisType::HEIGHT] + $dimension[AxisType::HEIGHT],
-                        $fittedItem->getPosition()[AxisType::BREADTH]
+                        AxisType::LENGTH  => $fittedItem->getPosition()[AxisType::LENGTH],
+                        AxisType::HEIGHT  => $fittedItem->getPosition()[AxisType::HEIGHT] + $dimension[AxisType::HEIGHT],
+                        AxisType::BREADTH  => $fittedItem->getPosition()[AxisType::BREADTH]
                     ];
                 } elseif ($axis === AxisType::BREADTH) {
                     $pivot = [
-                        $fittedItem->getPosition()[AxisType::LENGTH],
-                        $fittedItem->getPosition()[AxisType::HEIGHT],
-                        $fittedItem->getPosition()[AxisType::BREADTH] + $dimension[AxisType::BREADTH]
+                        AxisType::LENGTH  => $fittedItem->getPosition()[AxisType::LENGTH],
+                        AxisType::HEIGHT  => $fittedItem->getPosition()[AxisType::HEIGHT],
+                        AxisType::BREADTH  => $fittedItem->getPosition()[AxisType::BREADTH] + $dimension[AxisType::BREADTH]
                     ];
                 }
 

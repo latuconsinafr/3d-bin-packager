@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Latuconsinafr\BinPackager\BinPackager3D;
 
+use Latuconsinafr\BinPackager\BinPackager3D\Types\AxisType;
 use Latuconsinafr\BinPackager\BinPackager3D\Types\PositionType;
 use Latuconsinafr\BinPackager\BinPackager3D\Types\RotationCombinationType;
 
@@ -40,6 +41,11 @@ final class Item implements \JsonSerializable
     private float $height;
 
     /**
+     * @var float The item's volume.
+     */
+    private float $volume;
+
+    /**
      * @var float The item's weight.
      */
     private float $weight;
@@ -67,6 +73,7 @@ final class Item implements \JsonSerializable
         $this->length = $length;
         $this->breadth = $breadth;
         $this->height = $height;
+        $this->volume = (float) $length * $breadth * $height;
         $this->weight = $weight;
 
         $this->rotationType = RotationCombinationType::LBH_ROTATION;
@@ -114,6 +121,16 @@ final class Item implements \JsonSerializable
     }
 
     /**
+     * The item's volume getter.
+     * 
+     * @return float The item's volume.
+     */
+    public function getVolume(): float
+    {
+        return $this->volume;
+    }
+
+    /**
      * The item's weight getter.
      * 
      * @return float The item's weight.
@@ -137,7 +154,7 @@ final class Item implements \JsonSerializable
      * The item's position type getter.
      * In this case, it would return an array of 3 values representations of the x-axis, y-axis and z-axis (3d plane).
      * 
-     * @return int The item's position (for example = [0, 0, 0]).
+     * @return array The item's position (for example = ['x-axis => 0, 'y-axis' => 0, 'z-axis' => 0]).
      */
     public function getPosition(): array
     {
@@ -145,47 +162,68 @@ final class Item implements \JsonSerializable
     }
 
     /**
-     * Get the item's volume.
-     * 
-     * @return float The item's volume.
-     */
-    public function getVolume(): float
-    {
-        return (float)($this->length * $this->breadth * $this->height);
-    }
-
-    /**
      * Get the item's dimension based on the rotation type.
      * In this case, it would return an array of 3 values representations of the x-axis, y-axis and z-axis (3d plane).
      * 
-     * @return array The item's dimension (for example = [0, 0, 0]).
+     * @return array The item's dimension (for example = ['x-axis => 0, 'y-axis' => 0, 'z-axis' => 0]).
      */
     public function getDimension(): array
     {
         switch ($this->rotationType) {
-            case RotationCombinationType::LBH_ROTATION:
-                return [$this->length, $this->breadth, $this->height];
-                break;
-
             case RotationCombinationType::LHB_ROTATION:
-                return [$this->length, $this->height, $this->breadth];
+                return [
+                    AxisType::LENGTH => $this->length,
+                    AxisType::HEIGHT => $this->height,
+                    AxisType::BREADTH => $this->breadth
+                ];
+
                 break;
 
-            case RotationCombinationType::BLH_ROTATION:
-                return [$this->breadth, $this->length, $this->height];
-                break;
+            case RotationCombinationType::LBH_ROTATION:
+                return [
+                    AxisType::LENGTH => $this->length,
+                    AxisType::HEIGHT => $this->breadth,
+                    AxisType::BREADTH => $this->height
+                ];
 
-            case RotationCombinationType::BHL_ROTATION:
-                return [$this->breadth, $this->height, $this->length];
                 break;
 
             case RotationCombinationType::HLB_ROTATION:
-                return [$this->height, $this->length, $this->breadth];
+                return [
+                    AxisType::LENGTH => $this->height,
+                    AxisType::HEIGHT => $this->length,
+                    AxisType::BREADTH => $this->breadth
+                ];
+
                 break;
 
             case RotationCombinationType::HBL_ROTATION:
-                return [$this->height, $this->breadth, $this->length];
+                return [
+                    AxisType::LENGTH => $this->height,
+                    AxisType::HEIGHT => $this->breadth,
+                    AxisType::BREADTH => $this->length
+                ];
+
                 break;
+
+            case RotationCombinationType::BLH_ROTATION:
+                return [
+                    AxisType::LENGTH => $this->breadth,
+                    AxisType::HEIGHT => $this->length,
+                    AxisType::BREADTH => $this->height
+                ];
+
+                break;
+
+            case RotationCombinationType::BHL_ROTATION:
+                return [
+                    AxisType::LENGTH => $this->breadth,
+                    AxisType::HEIGHT => $this->height,
+                    AxisType::BREADTH => $this->length
+                ];
+
+                break;
+
             default:
                 throw new \UnexpectedValueException("Invalid rotation combination type, the value should be in between 0 and 5.");
         }

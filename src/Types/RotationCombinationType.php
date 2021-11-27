@@ -17,8 +17,8 @@ namespace Latuconsinafr\BinPackager\BinPackager3D\Types;
 class RotationCombinationType
 {
     // Rotation based on length (x-axis)
-    public const LBH_ROTATION = 0;
-    public const LHB_ROTATION = 1;
+    public const LHB_ROTATION = 0;
+    public const LBH_ROTATION = 1;
 
     // Rotation based on height (y-axis)
     public const HLB_ROTATION = 2;
@@ -30,8 +30,8 @@ class RotationCombinationType
 
     // Enum contains all the rotation combination type
     public const ALL_ROTATION_COMBINATION = [
-        RotationCombinationType::LBH_ROTATION,
         RotationCombinationType::LHB_ROTATION,
+        RotationCombinationType::LBH_ROTATION,
         RotationCombinationType::HLB_ROTATION,
         RotationCombinationType::HBL_ROTATION,
         RotationCombinationType::BLH_ROTATION,
