@@ -18,18 +18,18 @@ jobs:
         with:
           token: ${{ secrets.PA_TOKEN }}
 
-      - name: Setup PHP Action
+      - name: Setup PHP action
         uses: shivammathur/setup-php@v2
         with:
           extensions: intl
           php-version: ${{ matrix.php-versions }}
           coverage: pcov
 
-      - name: Install dependencies
-        run: composer install --prefer-dist
-
       - name: Update dependencies in lock file
         run: composer update
+
+      - name: Install dependencies
+        run: composer install --prefer-dist
 
       - name: Validate composer.json and composer.lock
         run: composer validate
@@ -37,7 +37,7 @@ jobs:
       - name: Run test suite
         run: vendor/bin/phpunit --coverage-clover=coverage.xml
 
-      - name: Upload Code Coverage to Codecov
+      - name: Upload code coverage to Codecov
         uses: codecov/codecov-action@v2
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
