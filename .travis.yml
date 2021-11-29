@@ -1,5 +1,9 @@
 language: php
 
+php:
+  - ^7.0
+  - ^8.0
+
 script:
   - vendor/bin/phpunit --coverage-clover coverage.xml
 

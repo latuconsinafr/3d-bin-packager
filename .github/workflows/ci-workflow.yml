@@ -1,0 +1,48 @@
+name: workflow
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php-version: [7.0, 8.0]
+    steps:
+      - name: Checkout to code repo
+        uses: actions/checkout@v1
+        with:
+          token: ${{ secrets.PA_TOKEN }}
+
+      - name: Setup PHP Action
+        uses: shivammathur/setup-php@v2
+        with:
+          extensions: intl
+          php-version: ${{ matrix.php-versions }}
+          coverage: pcov
+
+      - name: Install dependencies
+        run: composer install --prefer-dist
+
+      - name: Update dependencies in lock file
+        run: composer update
+
+      - name: Validate composer.json and composer.lock
+        run: composer validate
+
+      - name: Run test suite
+        run: vendor/bin/phpunit --coverage-clover=coverage.xml
+
+      - name: Upload Code Coverage to Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: ./coverage.xml
+          flags: tests
+          name: codecov-umbrella
+          yml: ./codecov.yml
+          fail_ci_if_error: true
