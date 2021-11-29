@@ -48,7 +48,7 @@ $packager->addItems([
 $start = microtime(true);
 
 // Call the pack method to pack all the items inside the packager into the bin
-while ($packager->withFirstFitDecreasing()->pack()) {
+while ($packager->withFirstFit()->pack()) {
 }
 
 $time_elapsed_secs = microtime(true) - $start;

@@ -50,6 +50,11 @@ final class Packager implements \JsonSerializable
     private float $totalItemsWeight;
 
     /**
+     * @var int The sort method to apply (1 for ascending and -1 for descending)
+     */
+    private int $sortMethod;
+
+    /**
      */
     public function __construct()
     {
@@ -59,6 +64,7 @@ final class Packager implements \JsonSerializable
         $this->totalBinsWeight = 0;
         $this->totalItemsVolume = 0;
         $this->totalItemsWeight = 0;
+        $this->sortMethod = -1;
     }
 
     /**
@@ -239,6 +245,23 @@ final class Packager implements \JsonSerializable
     }
 
     /**
+     * The sort method to apply.
+     * This value will be used to sort both the bin(s) and the item(s).
+     * 
+     * @param int $value 1 for ascending and -1 for descending.
+     * 
+     * @return void
+     */
+    public function setSortMethod(int $value): void
+    {
+        if ($value != -1 && $value != 1) {
+            throw new \UnexpectedValueException("The sort method should be either 1 (for ascending) or -1 (for descending)");
+        }
+
+        $this->sortMethod = $value;
+    }
+
+    /**
      * The pack item to bin method.
      * This method would try to pack the inputted item into the inputted bin.
      * Whether the inputted item would fit into the inputted bin or not.
@@ -321,22 +344,11 @@ final class Packager implements \JsonSerializable
      */
     public function withFirstFit(): self
     {
-        return $this;
-    }
-
-    /**
-     * Orders the items by descending size in this case is the item volume, then calls First-Fit 
-     * (in this case the self pack method).
-     * 
-     * @return self
-     */
-    public function withFirstFitDecreasing(): self
-    {
         // Sort the bins
         $iterableBins = $this->getIterableBins();
         $iterableBins->uasort(function ($a, $b) {
             if ($a->getVolume() === $b->getVolume()) return 0;
-            return ($a->getVolume() > $b->getVolume()) ? -1 : 1;
+            return ($a->getVolume() > $b->getVolume()) ? $this->sortMethod : -1 * $this->sortMethod;
         });
 
         $this->bins = $iterableBins;
@@ -345,7 +357,7 @@ final class Packager implements \JsonSerializable
         $iterableItems = $this->getIterableItems();
         $iterableItems->uasort(function ($a, $b) {
             if ($a->getVolume() === $b->getVolume()) return 0;
-            return ($a->getVolume() > $b->getVolume()) ? -1 : 1;
+            return ($a->getVolume() > $b->getVolume()) ? $this->sortMethod : -1 * $this->sortMethod;;
         });
 
         $this->items = $iterableItems;
