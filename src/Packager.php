@@ -13,6 +13,7 @@ namespace Latuconsinafr\BinPackager\BinPackager3D;
 
 use Latuconsinafr\BinPackager\BinPackager3D\Types\AxisType;
 use Latuconsinafr\BinPackager\BinPackager3D\Types\PositionType;
+use Latuconsinafr\BinPackager\BinPackager3D\Types\SortType;
 
 /**
  * A main packager class to pack all the items into all the bins.
@@ -63,7 +64,7 @@ final class Packager implements \JsonSerializable
      * @param int $precision The number of digits after the decimal point.
      * @param int $sortMethod The sort method to apply (1 for ascending and -1 for descending).
      */
-    public function __construct(int $precision = 0, int $sortMethod = -1)
+    public function __construct(int $precision = 0, int $sortMethod = SortType::DESCENDING)
     {
         if ($precision < 0) {
             throw new \UnexpectedValueException("The number of digits should be more than or equals to zero.");
@@ -176,7 +177,7 @@ final class Packager implements \JsonSerializable
             return 0;
         }
 
-        return (int)ceil($this->totalBinsVolume / $this->totalItemsVolume);
+        return (int)ceil($this->totalItemsVolume/ $this->totalBinsVolume);
     }
 
     /**
@@ -352,7 +353,7 @@ final class Packager implements \JsonSerializable
         $iterableBins = $this->getIterableBins();
         $iterableBins->uasort(function ($a, $b) {
             if ($a->getVolume() === $b->getVolume()) return 0;
-            return ($a->getVolume() > $b->getVolume()) ? $this->sortMethod : -1 * $this->sortMethod;
+            return ($a->getVolume() > $b->getVolume()) ? $this->sortMethod : SortType::DESCENDING * $this->sortMethod;
         });
 
         $this->bins = $iterableBins;
@@ -361,7 +362,7 @@ final class Packager implements \JsonSerializable
         $iterableItems = $this->getIterableItems();
         $iterableItems->uasort(function ($a, $b) {
             if ($a->getVolume() === $b->getVolume()) return 0;
-            return ($a->getVolume() > $b->getVolume()) ? $this->sortMethod : -1 * $this->sortMethod;;
+            return ($a->getVolume() > $b->getVolume()) ? $this->sortMethod : SortType::DESCENDING * $this->sortMethod;;
         });
 
         $this->items = $iterableItems;

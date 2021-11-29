@@ -63,21 +63,21 @@ final class Item implements \JsonSerializable
     /**
      * @param mixed $id The identifier of the item.
      * @param float $length The length of the item.
-     * @param float $breadth The breadth of the item.
      * @param float $height The height of the item.
+     * @param float $breadth The breadth of the item.
      * @param float $weight The weight of the item.
      */
-    public function __construct(mixed $id, float $length, float $breadth, float $height, float $weight)
+    public function __construct(mixed $id, float $length, float $height, float $breadth, float $weight)
     {
         $this->id = $id;
 
         $this->length = $length;
-        $this->breadth = $breadth;
         $this->height = $height;
-        $this->volume = (float) $this->length * $this->breadth * $this->height;
+        $this->breadth = $breadth;
+        $this->volume = (float) $this->length * $this->height * $this->breadth;
         $this->weight = $weight;
 
-        $this->rotationType = RotationCombinationType::LBH_ROTATION;
+        $this->rotationType = RotationCombinationType::LHB_ROTATION;
         $this->position = PositionType::START_POSITION;
     }
 
@@ -102,16 +102,6 @@ final class Item implements \JsonSerializable
     }
 
     /**
-     * The item's breadth getter.
-     * 
-     * @return float The item's breadth.
-     */
-    public function getBreadth(): float
-    {
-        return $this->breadth;
-    }
-
-    /**
      * The item's height getter.
      * 
      * @return float The item's height.
@@ -119,6 +109,16 @@ final class Item implements \JsonSerializable
     public function getHeight(): float
     {
         return $this->height;
+    }
+
+    /**
+     * The item's breadth getter.
+     * 
+     * @return float The item's breadth.
+     */
+    public function getBreadth(): float
+    {
+        return $this->breadth;
     }
 
     /**
@@ -240,8 +240,8 @@ final class Item implements \JsonSerializable
     public function setPrecision($precision): void
     {
         $this->length = round($this->length, $precision);
-        $this->breadth = round($this->breadth, $precision);
         $this->height = round($this->height, $precision);
+        $this->breadth = round($this->breadth, $precision);
         $this->volume = round($this->volume, $precision);
         $this->weight = round($this->weight, $precision);
     }

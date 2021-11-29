@@ -14,10 +14,10 @@ require_once __DIR__ . '/vendor/autoload.php';
 use Latuconsinafr\BinPackager\BinPackager3D\Bin;
 use Latuconsinafr\BinPackager\BinPackager3D\Item;
 use Latuconsinafr\BinPackager\BinPackager3D\Packager;
-
+use Latuconsinafr\BinPackager\BinPackager3D\Types\SortType;
 
 // Initialize the packager
-$packager = new Packager(2, -1);
+$packager = new Packager(2, SortType::DESCENDING);
 
 // Initialize all the bins
 $packager->addBins([
@@ -58,3 +58,4 @@ print_r("Time Elapsed: " . $time_elapsed_secs . " second(s)\n");
 print_r("Result: \n");
 print_r("Lower Bounds: " . $packager->getLowerBounds() . "\n");
 print_r($packager->getBins());
+print_r(json_encode($packager->getBins()));
