@@ -81,6 +81,11 @@ final class Bin implements \JsonSerializable
     private float $totalUnfittedWeight;
 
     /**
+     * @var int The number of digits after the decimal point.
+     */
+    private int $precision;
+
+    /**
      * @param mixed $id The identifier of the bin.
      * @param float $length The length of the bin.
      * @param float $breadth The breadth of the bin.
@@ -90,10 +95,11 @@ final class Bin implements \JsonSerializable
     public function __construct(mixed $id, float $length, float $breadth, float $height, float $weight)
     {
         $this->id = $id;
+
         $this->length = $length;
         $this->breadth = $breadth;
         $this->height = $height;
-        $this->volume = (float) $length * $breadth * $height;
+        $this->volume = (float) $this->length * $this->breadth * $this->height;
         $this->weight = $weight;
 
         $this->fittedItems = [];
@@ -243,6 +249,22 @@ final class Bin implements \JsonSerializable
     public function getTotalUnfittedWeight(): float
     {
         return $this->totalUnfittedWeight;
+    }
+
+    /**
+     * Set the number of digits after the decimal point of bin's values.
+     * 
+     * @param mixed $precision The number of digits after the decimal point.
+     * 
+     * @return void
+     */
+    public function setPrecision($precision): void
+    {
+        $this->length = round($this->length, $precision);
+        $this->breadth = round($this->breadth, $precision);
+        $this->height = round($this->height, $precision);
+        $this->volume = round($this->volume, $precision);
+        $this->weight = round($this->weight, $precision);
     }
 
     /**

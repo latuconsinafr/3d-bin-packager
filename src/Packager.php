@@ -50,21 +50,36 @@ final class Packager implements \JsonSerializable
     private float $totalItemsWeight;
 
     /**
-     * @var int The sort method to apply (1 for ascending and -1 for descending)
+     * @var int The number of digits after the decimal point.
+     */
+    private int $precision;
+
+    /**
+     * @var int The sort method to apply (1 for ascending and -1 for descending).
      */
     private int $sortMethod;
 
     /**
+     * @param int $precision The number of digits after the decimal point.
+     * @param int $sortMethod The sort method to apply (1 for ascending and -1 for descending).
      */
-    public function __construct()
+    public function __construct(int $precision = 0, int $sortMethod = -1)
     {
+        if ($precision < 0) {
+            throw new \UnexpectedValueException("The number of digits should be more than or equals to zero.");
+        }
+        if ($sortMethod != -1 && $sortMethod != 1) {
+            throw new \UnexpectedValueException("The sort method should be either 1 (for ascending) or -1 (for descending).");
+        }
+
         $this->bins = [];
         $this->items = [];
         $this->totalBinsVolume = 0;
         $this->totalBinsWeight = 0;
         $this->totalItemsVolume = 0;
         $this->totalItemsWeight = 0;
-        $this->sortMethod = -1;
+        $this->precision = $precision;
+        $this->sortMethod = $sortMethod;
     }
 
     /**
@@ -180,6 +195,8 @@ final class Packager implements \JsonSerializable
             }
         }
 
+        $bin->setPrecision($this->precision);
+
         $this->bins[$bin->getId()] = $bin;
         $this->totalBinsVolume += $bin->getVolume();
         $this->totalBinsWeight += $bin->getWeight();
@@ -220,6 +237,8 @@ final class Packager implements \JsonSerializable
             }
         }
 
+        $item->setPrecision($this->precision);
+        
         $this->items[$item->getId()] = $item;
         $this->totalItemsVolume += $item->getVolume();
         $this->totalItemsWeight += $item->getWeight();
@@ -242,23 +261,6 @@ final class Packager implements \JsonSerializable
 
             $this->addItem($item);
         }
-    }
-
-    /**
-     * The sort method to apply.
-     * This value will be used to sort both the bin(s) and the item(s).
-     * 
-     * @param int $value 1 for ascending and -1 for descending.
-     * 
-     * @return void
-     */
-    public function setSortMethod(int $value): void
-    {
-        if ($value != -1 && $value != 1) {
-            throw new \UnexpectedValueException("The sort method should be either 1 (for ascending) or -1 (for descending)");
-        }
-
-        $this->sortMethod = $value;
     }
 
     /**
@@ -339,12 +341,14 @@ final class Packager implements \JsonSerializable
     /**
      * The default pack method, keeps all bins open, in the order in which they were opened. 
      * It attempts to place each new item into the first bin in which it fits.
+     * This first fir also applied the sort method to both the bin(s) and the item(s) according to the sort method value,
+     * it could ascending or descending.
      * 
      * @return self
      */
     public function withFirstFit(): self
     {
-        // Sort the bins
+        // Sort the bins based on the sort method value
         $iterableBins = $this->getIterableBins();
         $iterableBins->uasort(function ($a, $b) {
             if ($a->getVolume() === $b->getVolume()) return 0;
@@ -353,7 +357,7 @@ final class Packager implements \JsonSerializable
 
         $this->bins = $iterableBins;
 
-        // Sort the items
+        // Sort the items based on the sort method value
         $iterableItems = $this->getIterableItems();
         $iterableItems->uasort(function ($a, $b) {
             if ($a->getVolume() === $b->getVolume()) return 0;
@@ -367,7 +371,7 @@ final class Packager implements \JsonSerializable
 
     /**
      * The main pack method, this method would try to pack all the items into all the bins
-     * based on the chosen method, whether the @see withFirstFit() or @see withFirstFitDecreasing().
+     * based on the chosen method, currently the available method is the @see withFirstFit().
      * 
      * @return void
      */

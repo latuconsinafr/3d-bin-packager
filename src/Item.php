@@ -70,10 +70,11 @@ final class Item implements \JsonSerializable
     public function __construct(mixed $id, float $length, float $breadth, float $height, float $weight)
     {
         $this->id = $id;
+
         $this->length = $length;
         $this->breadth = $breadth;
         $this->height = $height;
-        $this->volume = (float) $length * $breadth * $height;
+        $this->volume = (float) $this->length * $this->breadth * $this->height;
         $this->weight = $weight;
 
         $this->rotationType = RotationCombinationType::LBH_ROTATION;
@@ -227,6 +228,22 @@ final class Item implements \JsonSerializable
             default:
                 throw new \UnexpectedValueException("Invalid rotation combination type, the value should be in between 0 and 5.");
         }
+    }
+
+    /**
+     * Set the number of digits after the decimal point of item's values.
+     * 
+     * @param mixed $precision The number of digits after the decimal point.
+     * 
+     * @return void
+     */
+    public function setPrecision($precision): void
+    {
+        $this->length = round($this->length, $precision);
+        $this->breadth = round($this->breadth, $precision);
+        $this->height = round($this->height, $precision);
+        $this->volume = round($this->volume, $precision);
+        $this->weight = round($this->weight, $precision);
     }
 
     /**
