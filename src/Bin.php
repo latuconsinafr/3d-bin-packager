@@ -23,7 +23,7 @@ final class Bin implements \JsonSerializable
     /**
      * @var mixed The bin's id.
      */
-    private mixed $id;
+    private $id;
 
     /**
      * @var float The bin's length.
@@ -87,7 +87,7 @@ final class Bin implements \JsonSerializable
      * @param float $breadth The breadth of the bin.
      * @param float $weight The weight of the bin.
      */
-    public function __construct(mixed $id, float $length, float $height, float $breadth, float $weight)
+    public function __construct($id, float $length, float $height, float $breadth, float $weight)
     {
         $this->id = $id;
 
@@ -111,7 +111,7 @@ final class Bin implements \JsonSerializable
      * 
      * @return mixed The bin's id.
      */
-    public function getId(): mixed
+    public function getId()
     {
         return $this->id;
     }

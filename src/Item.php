@@ -23,7 +23,7 @@ final class Item implements \JsonSerializable
     /**
      * @var mixed The item's id.
      */
-    private mixed $id;
+    private $id;
 
     /**
      * @var float The item's length.
@@ -67,7 +67,7 @@ final class Item implements \JsonSerializable
      * @param float $breadth The breadth of the item.
      * @param float $weight The weight of the item.
      */
-    public function __construct(mixed $id, float $length, float $height, float $breadth, float $weight)
+    public function __construct($id, float $length, float $height, float $breadth, float $weight)
     {
         $this->id = $id;
 
@@ -86,7 +86,7 @@ final class Item implements \JsonSerializable
      * 
      * @return mixed The item's id.
      */
-    public function getId(): mixed
+    public function getId()
     {
         return $this->id;
     }
