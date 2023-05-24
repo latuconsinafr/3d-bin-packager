@@ -371,6 +371,35 @@ final class Packager implements \JsonSerializable
     }
 
     /**
+     * This method sort items by their weight, packing the heaviest first.
+     * It could be ascending or descending.
+     *
+     * @return self
+     */
+    public function withHeaviestFirst(): self
+    {
+        // Sort the bins based on the sort method value
+        $iterableBins = $this->getIterableBins();
+        $iterableBins->uasort(function ($a, $b) {
+            if ($a->getWeight() === $b->getWeight()) return 0;
+            return ($a->getWeight() > $b->getWeight()) ? $this->sortMethod : SortType::DESCENDING * $this->sortMethod;
+        });
+
+        $this->bins = $iterableBins;
+
+        // Sort the items based on the sort method value
+        $iterableItems = $this->getIterableItems();
+        $iterableItems->uasort(function ($a, $b) {
+            if ($a->getWeight() === $b->getWeight()) return 0;
+            return ($a->getWeight() > $b->getWeight()) ? $this->sortMethod : SortType::DESCENDING * $this->sortMethod;;
+        });
+
+        $this->items = $iterableItems;
+
+        return $this;
+    }
+
+    /**
      * The main pack method, this method would try to pack all the items into all the bins
      * based on the chosen method, currently the available method is the @see withFirstFit().
      * 
