@@ -373,6 +373,114 @@ class PackagerTest extends TestCase
     }
 
     /**
+     * pack() method tested with two bins and seven items.
+     * The second bin should go first, cause it has bigger volume.
+     * All items are fitted into just only the second bin.
+     *
+     * @return void
+     */
+    public function testPackMethod_HeaviestFirst_All_Items_Fitted_Into_One_Bin(): void
+    {
+        $this->packager->addBins([
+            new Bin($this->binFixture->bin1Id, $this->binFixture->bin1Length, $this->binFixture->bin1Height, $this->binFixture->bin1Breadth, $this->binFixture->bin1Weight),
+            new Bin($this->binFixture->bin2Id, $this->binFixture->bin2Length, $this->binFixture->bin2Height, $this->binFixture->bin2Breadth, $this->binFixture->bin2Weight),
+        ]);
+
+        $this->packager->addItems([
+            new Item($this->itemFixture->item1Id, $this->itemFixture->item1Length, $this->itemFixture->item1Height, $this->itemFixture->item1Breadth, $this->itemFixture->item1Weight),
+            new Item($this->itemFixture->item2Id, $this->itemFixture->item2Length, $this->itemFixture->item2Height, $this->itemFixture->item2Breadth, $this->itemFixture->item2Weight),
+            new Item($this->itemFixture->item3Id, $this->itemFixture->item3Length, $this->itemFixture->item3Height, $this->itemFixture->item3Breadth, $this->itemFixture->item3Weight),
+            new Item($this->itemFixture->item4Id, $this->itemFixture->item4Length, $this->itemFixture->item4Height, $this->itemFixture->item4Breadth, $this->itemFixture->item4Weight),
+            new Item($this->itemFixture->item5Id, $this->itemFixture->item5Length, $this->itemFixture->item5Height, $this->itemFixture->item5Breadth, $this->itemFixture->item5Weight),
+            new Item($this->itemFixture->item6Id, $this->itemFixture->item6Length, $this->itemFixture->item6Height, $this->itemFixture->item6Breadth, $this->itemFixture->item6Weight),
+            new Item($this->itemFixture->item7Id, $this->itemFixture->item7Length, $this->itemFixture->item7Height, $this->itemFixture->item7Breadth, $this->itemFixture->item7Weight),
+        ]);
+
+        $this->packager->withHeaviestFirst()->pack();
+
+        $resultedBins = $this->packager->getBins();
+
+        $this->assertCount(7, $resultedBins[$this->binFixture->bin2Id]->getFittedItems());
+        $this->assertCount(0, $resultedBins[$this->binFixture->bin1Id]->getFittedItems());
+        $this->assertCount(0, $resultedBins[$this->binFixture->bin2Id]->getUnfittedItems());
+        $this->assertCount(0, $resultedBins[$this->binFixture->bin1Id]->getUnfittedItems());
+    }
+
+    /**
+     * pack() method tested with two bins and nine items.
+     * The second bin should go first, cause it has bigger volume.
+     * All items are fitted into the second bin.
+     *
+     * @return void
+     */
+    public function testPackMethod_HeaviestFirst_All_Items_Fitted_Into_Two_Bins(): void
+    {
+        $this->packager->addBins([
+            new Bin($this->binFixture->bin1Id, $this->binFixture->bin1Length, $this->binFixture->bin1Height, $this->binFixture->bin1Breadth, $this->binFixture->bin1Weight),
+            new Bin($this->binFixture->bin2Id, $this->binFixture->bin2Length, $this->binFixture->bin2Height, $this->binFixture->bin2Breadth, $this->binFixture->bin2Weight),
+        ]);
+
+        $this->packager->addItems([
+            new Item($this->itemFixture->item1Id, $this->itemFixture->item1Length, $this->itemFixture->item1Height, $this->itemFixture->item1Breadth, $this->itemFixture->item1Weight),
+            new Item($this->itemFixture->item2Id, $this->itemFixture->item2Length, $this->itemFixture->item2Height, $this->itemFixture->item2Breadth, $this->itemFixture->item2Weight),
+            new Item($this->itemFixture->item3Id, $this->itemFixture->item3Length, $this->itemFixture->item3Height, $this->itemFixture->item3Breadth, $this->itemFixture->item3Weight),
+            new Item($this->itemFixture->item4Id, $this->itemFixture->item4Length, $this->itemFixture->item4Height, $this->itemFixture->item4Breadth, $this->itemFixture->item4Weight),
+            new Item($this->itemFixture->item5Id, $this->itemFixture->item5Length, $this->itemFixture->item5Height, $this->itemFixture->item5Breadth, $this->itemFixture->item5Weight),
+            new Item($this->itemFixture->item6Id, $this->itemFixture->item6Length, $this->itemFixture->item6Height, $this->itemFixture->item6Breadth, $this->itemFixture->item6Weight),
+            new Item($this->itemFixture->item7Id, $this->itemFixture->item7Length, $this->itemFixture->item7Height, $this->itemFixture->item7Breadth, $this->itemFixture->item7Weight),
+            new Item($this->itemFixture->item8Id, $this->itemFixture->item8Length, $this->itemFixture->item8Height, $this->itemFixture->item8Breadth, $this->itemFixture->item8Weight),
+            new Item($this->itemFixture->item9Id, $this->itemFixture->item9Length, $this->itemFixture->item9Height, $this->itemFixture->item9Breadth, $this->itemFixture->item9Weight),
+        ]);
+
+        $this->packager->withHeaviestFirst()->pack();
+
+        $resultedBins = $this->packager->getBins();
+
+        $this->assertCount(9, $resultedBins[$this->binFixture->bin2Id]->getFittedItems());
+        $this->assertCount(0, $resultedBins[$this->binFixture->bin1Id]->getFittedItems());
+        $this->assertCount(0, $resultedBins[$this->binFixture->bin2Id]->getUnfittedItems());
+        $this->assertCount(0, $resultedBins[$this->binFixture->bin1Id]->getUnfittedItems());
+    }
+
+    /**
+     * pack() method tested with two bins and ten items.
+     * The second bin should go first, cause it has bigger volume.
+     * Eight items are fitted into the second bin, and only one is fitted into the first bin,
+     * since the item 10 is not fitted into any bin.
+     *
+     * @return void
+     */
+    public function testPackMethod_HeaviestFirst_Not_All_Items_Fitted_Into_Two_Bins(): void
+    {
+        $this->packager->addBins([
+            new Bin($this->binFixture->bin1Id, $this->binFixture->bin1Length, $this->binFixture->bin1Height, $this->binFixture->bin1Breadth, $this->binFixture->bin1Weight),
+            new Bin($this->binFixture->bin2Id, $this->binFixture->bin2Length, $this->binFixture->bin2Height, $this->binFixture->bin2Breadth, $this->binFixture->bin2Weight),
+        ]);
+
+        $this->packager->addItems([
+            new Item($this->itemFixture->item1Id, $this->itemFixture->item1Length, $this->itemFixture->item1Height, $this->itemFixture->item1Breadth, $this->itemFixture->item1Weight),
+            new Item($this->itemFixture->item2Id, $this->itemFixture->item2Length, $this->itemFixture->item2Height, $this->itemFixture->item2Breadth, $this->itemFixture->item2Weight),
+            new Item($this->itemFixture->item3Id, $this->itemFixture->item3Length, $this->itemFixture->item3Height, $this->itemFixture->item3Breadth, $this->itemFixture->item3Weight),
+            new Item($this->itemFixture->item4Id, $this->itemFixture->item4Length, $this->itemFixture->item4Height, $this->itemFixture->item4Breadth, $this->itemFixture->item4Weight),
+            new Item($this->itemFixture->item5Id, $this->itemFixture->item5Length, $this->itemFixture->item5Height, $this->itemFixture->item5Breadth, $this->itemFixture->item5Weight),
+            new Item($this->itemFixture->item6Id, $this->itemFixture->item6Length, $this->itemFixture->item6Height, $this->itemFixture->item6Breadth, $this->itemFixture->item6Weight),
+            new Item($this->itemFixture->item7Id, $this->itemFixture->item7Length, $this->itemFixture->item7Height, $this->itemFixture->item7Breadth, $this->itemFixture->item7Weight),
+            new Item($this->itemFixture->item8Id, $this->itemFixture->item8Length, $this->itemFixture->item8Height, $this->itemFixture->item8Breadth, $this->itemFixture->item8Weight),
+            new Item($this->itemFixture->item9Id, $this->itemFixture->item9Length, $this->itemFixture->item9Height, $this->itemFixture->item9Breadth, $this->itemFixture->item9Weight),
+            new Item($this->itemFixture->item10Id, $this->itemFixture->item10Length, $this->itemFixture->item10Height, $this->itemFixture->item10Breadth, $this->itemFixture->item10Weight),
+        ]);
+
+        $this->packager->withHeaviestFirst()->pack();
+
+        $resultedBins = $this->packager->getBins();
+
+        $this->assertCount(9, $resultedBins[$this->binFixture->bin2Id]->getFittedItems());
+        $this->assertCount(0, $resultedBins[$this->binFixture->bin1Id]->getFittedItems());
+        $this->assertCount(1, $resultedBins[$this->binFixture->bin2Id]->getUnfittedItems());
+        $this->assertCount(1, $resultedBins[$this->binFixture->bin1Id]->getUnfittedItems());
+    }
+
+    /**
      * The tear down test environment method.
      * 
      * @return void
