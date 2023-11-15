@@ -41,10 +41,10 @@ final class IntersectionHandler
         $secondCx = $secondItem->getPosition()[$xAxis] + $secondDimension[$xAxis] / 2;
         $secondCy = $secondItem->getPosition()[$yAxis] + $secondDimension[$yAxis] / 2;
 
-        $ix = max($firstCx, $secondCx) - min($firstCx, $secondCx);
-        $iy = max($firstCy, $secondCy) - min($firstCy, $secondCy);
+        $ix = round(max($firstCx, $secondCx) - min($firstCx, $secondCx));
+        $iy = round(max($firstCy, $secondCy) - min($firstCy, $secondCy));
 
-        return $ix < ($firstDimension[$xAxis] + $secondDimension[$xAxis]) / 2 && $iy < ($firstDimension[$yAxis] + $secondDimension[$yAxis]) / 2;
+        return $ix < round(($firstDimension[$xAxis] + $secondDimension[$xAxis]) / 2) && $iy < ($firstDimension[$yAxis] + $secondDimension[$yAxis]) / 2;
     }
 
     /**
