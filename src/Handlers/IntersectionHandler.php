@@ -44,7 +44,7 @@ final class IntersectionHandler
         $ix = round(max($firstCx, $secondCx) - min($firstCx, $secondCx));
         $iy = round(max($firstCy, $secondCy) - min($firstCy, $secondCy));
 
-        return $ix < round(($firstDimension[$xAxis] + $secondDimension[$xAxis]) / 2) && $iy < ($firstDimension[$yAxis] + $secondDimension[$yAxis]) / 2;
+        return $ix < round(($firstDimension[$xAxis] + $secondDimension[$xAxis]) / 2) && $iy < round(($firstDimension[$yAxis] + $secondDimension[$yAxis]) / 2);
     }
 
     /**
